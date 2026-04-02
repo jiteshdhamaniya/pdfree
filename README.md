@@ -8,13 +8,23 @@ A simple, fast macOS app to remove password protection from PDFs. Built with [Ta
 
 > Requires macOS 12 or later (Apple Silicon & Intel)
 
+### Important: First launch
+
+Since PDFree is not signed with an Apple Developer certificate, macOS Gatekeeper will block it on first open. To fix this, run the following command in Terminal after copying to Applications:
+
+```bash
+xattr -cr /Applications/PDFree.app
+```
+
+Then open PDFree normally — it will work fine after that.
+
 ## Features
 
 - **Drag & drop** — Drop one or more password-protected PDFs
 - **Batch unlock** — Unlock multiple PDFs at once, each with its own password
 - **Native performance** — Uses macOS Core Graphics for fast, reliable decryption
 - **Reveal in Finder / Open File** — Quick actions after unlocking
-- **Lightweight** — ~5MB app, no external dependencies
+- **Lightweight** — ~2.6MB DMG, no external dependencies
 - **Privacy-first** — Everything runs locally, zero network requests
 
 ## How to use
@@ -53,6 +63,10 @@ PDFree uses macOS's native **Core Graphics** framework (`CGPDFDocument`) to:
 4. Save the result — a fully unlocked PDF
 
 Supports all PDF encryption types that macOS supports (RC4, AES-128, AES-256).
+
+## Author
+
+Made by [Jitesh Dhamaniya](https://github.com/jiteshdhamaniya)
 
 ## License
 
