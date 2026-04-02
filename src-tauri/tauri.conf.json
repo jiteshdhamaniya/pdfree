@@ -20,7 +20,7 @@
     "bundle": {
       "active": true,
       "category": "Utility",
-      "copyright": "",
+      "copyright": "© 2026 Jitesh Dhamaniya",
       "deb": {
         "depends": []
       },
