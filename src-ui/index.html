@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDFree</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .container {
+      width: 420px;
+      text-align: center;
+      padding: 24px 0;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+    .tagline {
+      font-size: 13px;
+      color: #6a6a8a;
+      margin-bottom: 24px;
+    }
+    .drop-zone {
+      border: 2px dashed #4a4a6a;
+      border-radius: 16px;
+      padding: 48px 24px;
+      transition: all 0.2s ease;
+      cursor: default;
+      background: rgba(255,255,255,0.02);
+    }
+    .drop-zone.hover {
+      border-color: #6c63ff;
+      background: rgba(108, 99, 255, 0.08);
+    }
+    .drop-zone.has-files {
+      border-color: #4a4a6a;
+      padding: 20px;
+    }
+    .drop-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.6;
+    }
+    .drop-text {
+      font-size: 15px;
+      color: #8888aa;
+    }
+    .file-list {
+      text-align: left;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    .file-item {
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .file-item:last-child { margin-bottom: 0; }
+    .file-item-name {
+      font-size: 13px;
+      color: #b0b0cc;
+      word-break: break-all;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+    }
+    .file-item-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .file-item-row input[type="password"] {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #4a4a6a;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .file-item-row input[type="password"]:focus {
+      border-color: #6c63ff;
+    }
+    .file-item-row input[type="password"]::placeholder {
+      color: #6a6a8a;
+    }
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #6c63ff;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: #5a52e0; }
+    .btn:active { background: #4a42c0; }
+    .btn:disabled {
+      background: #3a3a5a;
+      cursor: not-allowed;
+      color: #7a7a9a;
+    }
+    .file-item-status {
+      margin-top: 8px;
+      font-size: 13px;
+      min-height: 18px;
+    }
+    .file-item-status.error { color: #ff6b6b; }
+    .file-item-status.success { color: #51cf66; }
+    .file-item-status.info { color: #8888aa; }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-action {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #4a4a6a;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: #c0c0da;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #6c63ff;
+      color: #fff;
+    }
+    .reset-link {
+      display: inline-block;
+      margin-top: 16px;
+      color: #6c63ff;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .reset-link:hover { color: #8a83ff; }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PDFree</h1>
+    <p class="tagline">Remove passwords from PDFs</p>
+    <div class="drop-zone" id="dropZone">
+      <div id="dropContent">
+        <div class="drop-icon">📄</div>
+        <div class="drop-text">Drop password-protected PDFs here</div>
+      </div>
+      <div id="fileListContainer" style="display:none">
+        <div class="file-list" id="fileList"></div>
+        <span class="reset-link" id="resetLink" onclick="resetApp()">Start over</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const files = []; // { path, name, status, outputPath }
+
+    const dropZone = document.getElementById('dropZone');
+    const dropContent = document.getElementById('dropContent');
+    const fileListContainer = document.getElementById('fileListContainer');
+    const fileList = document.getElementById('fileList');
+
+    window.__TAURI__.event.listen('tauri://file-drop', (event) => {
+      const paths = event.payload;
+      if (paths && paths.length > 0) {
+        const pdfPaths = paths.filter(p => p.toLowerCase().endsWith('.pdf'));
+        if (pdfPaths.length === 0) {
+          return;
+        }
+        pdfPaths.forEach(p => addFile(p));
+      }
+      dropZone.classList.remove('hover');
+    });
+
+    window.__TAURI__.event.listen('tauri://file-drop-hover', () => {
+      dropZone.classList.add('hover');
+    });
+
+    window.__TAURI__.event.listen('tauri://file-drop-cancelled', () => {
+      dropZone.classList.remove('hover');
+    });
+
+    function addFile(path) {
+      // Skip duplicates
+      if (files.some(f => f.path === path)) return;
+
+      const name = path.split('/').pop();
+      const index = files.length;
+      files.push({ path, name, status: 'pending', outputPath: null });
+
+      dropContent.style.display = 'none';
+      fileListContainer.style.display = 'block';
+      dropZone.classList.add('has-files');
+
+      renderFileItem(index);
+
+      // Focus the new password input
+      setTimeout(() => {
+        const input = document.getElementById('pwd-' + index);
+        if (input) input.focus();
+      }, 100);
+    }
+
+    function renderFileItem(index) {
+      const f = files[index];
+      let item = document.getElementById('item-' + index);
+      if (!item) {
+        item = document.createElement('div');
+        item.className = 'file-item';
+        item.id = 'item-' + index;
+        fileList.appendChild(item);
+      }
+
+      if (f.status === 'done') {
+        item.innerHTML = `
+          <div class="file-item-name">${escapeHtml(f.name)}</div>
+          <div class="file-item-status success">Unlocked successfully</div>
+          <div class="action-buttons">
+            <button class="btn-action" onclick="revealInFinder(${index})">Reveal in Finder</button>
+            <button class="btn-action" onclick="openFile(${index})">Open File</button>
+          </div>
+        `;
+      } else if (f.status === 'unlocking') {
+        item.innerHTML = `
+          <div class="file-item-name">${escapeHtml(f.name)}</div>
+          <div class="file-item-row">
+            <input type="password" id="pwd-${index}" placeholder="Password" disabled>
+            <button class="btn" disabled><span class="spinner"></span>...</button>
+          </div>
+        `;
+      } else if (f.status === 'error') {
+        item.innerHTML = `
+          <div class="file-item-name">${escapeHtml(f.name)}</div>
+          <div class="file-item-row">
+            <input type="password" id="pwd-${index}" placeholder="Password" value="${escapeAttr(f.lastPassword || '')}">
+            <button class="btn" onclick="unlockFile(${index})">Unlock</button>
+          </div>
+          <div class="file-item-status error">${escapeHtml(f.errorMsg)}</div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('pwd-' + index);
+          if (input) {
+            input.focus();
+            input.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') unlockFile(index);
+            });
+          }
+        }, 50);
+      } else {
+        // pending
+        item.innerHTML = `
+          <div class="file-item-name">${escapeHtml(f.name)}</div>
+          <div class="file-item-row">
+            <input type="password" id="pwd-${index}" placeholder="Password">
+            <button class="btn" onclick="unlockFile(${index})">Unlock</button>
+          </div>
+          <div class="file-item-status" id="status-${index}"></div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('pwd-' + index);
+          if (input) {
+            input.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') unlockFile(index);
+            });
+          }
+        }, 50);
+      }
+    }
+
+    async function unlockFile(index) {
+      const f = files[index];
+      const input = document.getElementById('pwd-' + index);
+      const password = input ? input.value : '';
+      if (!password) {
+        f.status = 'error';
+        f.errorMsg = 'Please enter the password';
+        f.lastPassword = '';
+        renderFileItem(index);
+        return;
+      }
+
+      f.status = 'unlocking';
+      f.lastPassword = password;
+      renderFileItem(index);
+
+      try {
+        const result = await window.__TAURI__.invoke('unlock_pdf', {
+          filePath: f.path,
+          password: password
+        });
+        f.status = 'done';
+        f.outputPath = result;
+        renderFileItem(index);
+      } catch (err) {
+        f.status = 'error';
+        f.errorMsg = err;
+        renderFileItem(index);
+      }
+    }
+
+    async function revealInFinder(index) {
+      const f = files[index];
+      if (!f.outputPath) return;
+      // Use shell.open on the parent directory to reveal
+      const parentDir = f.outputPath.substring(0, f.outputPath.lastIndexOf('/'));
+      await window.__TAURI__.shell.open(parentDir);
+    }
+
+    async function openFile(index) {
+      const f = files[index];
+      if (!f.outputPath) return;
+      await window.__TAURI__.shell.open(f.outputPath);
+    }
+
+    function resetApp() {
+      files.length = 0;
+      fileList.innerHTML = '';
+      dropContent.style.display = 'block';
+      fileListContainer.style.display = 'none';
+      dropZone.classList.remove('has-files');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function escapeAttr(str) {
+      return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Rust / Tauri build artifacts
+src-tauri/target/
+.context/
+
+# macOS
+.DS_Store
+*.swp
+
+# IDE
+.vscode/
+.idea/
