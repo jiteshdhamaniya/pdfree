@@ -1,6 +1,7 @@
 # Rust / Tauri build artifacts
 src-tauri/target/
 .context/
+*.dmg
 
 # macOS
 .DS_Store
