@@ -21,6 +21,7 @@
       width: 420px;
       text-align: center;
       padding: 24px 0;
+      position: relative;
     }
     h1 {
       font-size: 22px;
@@ -32,6 +33,24 @@
       font-size: 13px;
       color: #6a6a8a;
       margin-bottom: 24px;
+    }
+    .settings-btn {
+      position: absolute;
+      top: 24px;
+      right: 0;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #4a4a6a;
+      border-radius: 8px;
+      color: #b0b0cc;
+      font-size: 12px;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .settings-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #6c63ff;
+      color: #fff;
     }
     .drop-zone {
       border: 2px dashed #4a4a6a;
@@ -57,6 +76,11 @@
     .drop-text {
       font-size: 15px;
       color: #8888aa;
+    }
+    .drop-hint {
+      font-size: 12px;
+      color: #5a5a7a;
+      margin-top: 8px;
     }
     .file-list {
       text-align: left;
@@ -84,7 +108,9 @@
       gap: 8px;
       align-items: center;
     }
-    .file-item-row input[type="password"] {
+    .file-item-row input[type="password"],
+    .file-item-row input[type="text"],
+    .save-row input[type="text"] {
       flex: 1;
       padding: 10px 12px;
       border: 1px solid #4a4a6a;
@@ -95,12 +121,10 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    .file-item-row input[type="password"]:focus {
-      border-color: #6c63ff;
-    }
-    .file-item-row input[type="password"]::placeholder {
-      color: #6a6a8a;
-    }
+    .file-item-row input:focus,
+    .save-row input:focus { border-color: #6c63ff; }
+    .file-item-row input::placeholder,
+    .save-row input::placeholder { color: #6a6a8a; }
     .btn {
       padding: 10px 16px;
       border: none;
@@ -128,6 +152,15 @@
     .file-item-status.error { color: #ff6b6b; }
     .file-item-status.success { color: #51cf66; }
     .file-item-status.info { color: #8888aa; }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      color: #b9b4ff;
+      background: rgba(108, 99, 255, 0.18);
+      border-radius: 6px;
+      padding: 2px 7px;
+      margin-left: 6px;
+    }
     .action-buttons {
       display: flex;
       gap: 8px;
@@ -150,6 +183,23 @@
       border-color: #6c63ff;
       color: #fff;
     }
+    .save-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: #6c63ff;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      margin-top: 8px;
+    }
+    .link-btn:hover { color: #8a83ff; }
     .reset-link {
       display: inline-block;
       margin-top: 16px;
@@ -176,48 +226,309 @@
       font-size: 12px;
       color: #5a5a7a;
     }
-    .footer a {
-      color: #6c63ff;
-      text-decoration: none;
+    .footer a { color: #6c63ff; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; color: #8a83ff; }
+
+    /* Saved-passwords panel */
+    .panel {
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #3a3a5a;
+      border-radius: 14px;
+      padding: 18px;
     }
-    .footer a:hover {
-      text-decoration: underline;
-      color: #8a83ff;
+    .panel h2 {
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 4px;
     }
+    .panel .sub {
+      font-size: 12px;
+      color: #6a6a8a;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .saved-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .saved-item .label {
+      font-size: 13px;
+      color: #c0c0da;
+      word-break: break-word;
+    }
+    .saved-item .mask { font-size: 12px; color: #5a5a7a; }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #ff6b6b;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 6px;
+      border-radius: 6px;
+    }
+    .icon-btn:hover { background: rgba(255,107,107,0.12); }
+    .empty-note {
+      font-size: 12px;
+      color: #5a5a7a;
+      text-align: center;
+      padding: 10px 0 14px;
+    }
+    .add-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #3a3a5a;
+    }
+    .add-form input {
+      padding: 10px 12px;
+      border: 1px solid #4a4a6a;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    .add-form input:focus { border-color: #6c63ff; }
+    .add-form input::placeholder { color: #6a6a8a; }
+    .panel-status { font-size: 12px; min-height: 16px; margin-top: 6px; }
+    .panel-status.error { color: #ff6b6b; }
+    .panel-status.success { color: #51cf66; }
   </style>
 </head>
 <body>
   <div class="container">
+    <button class="settings-btn" id="settingsBtn" onclick="togglePanel()">🔑 Saved</button>
     <h1>PDFree</h1>
     <p class="tagline">Remove passwords from PDFs</p>
-    <div class="drop-zone" id="dropZone">
-      <div id="dropContent">
-        <div class="drop-icon">📄</div>
-        <div class="drop-text">Drop password-protected PDFs here</div>
-      </div>
-      <div id="fileListContainer" style="display:none">
-        <div class="file-list" id="fileList"></div>
-        <span class="reset-link" id="resetLink" onclick="resetApp()">Start over</span>
+
+    <!-- Main drop view -->
+    <div id="mainView">
+      <div class="drop-zone" id="dropZone">
+        <div id="dropContent">
+          <div class="drop-icon">📄</div>
+          <div class="drop-text">Drop password-protected PDFs here</div>
+          <div class="drop-hint" id="dropHint"></div>
+        </div>
+        <div id="fileListContainer" style="display:none">
+          <div class="file-list" id="fileList"></div>
+          <span class="reset-link" id="resetLink" onclick="resetApp()">Start over</span>
+        </div>
       </div>
     </div>
+
+    <!-- Saved passwords + profile panel -->
+    <div id="panelView" style="display:none">
+      <div class="panel">
+        <h2>Saved passwords</h2>
+        <p class="sub">PDFree tries these automatically when you drop a PDF. They're stored in your macOS Keychain — encrypted and only on this Mac.</p>
+        <div id="savedList"></div>
+        <div class="add-form">
+          <input type="text" id="newLabel" placeholder="Label (e.g. ICICI credit card)">
+          <input type="password" id="newPassword" placeholder="Password">
+          <button class="btn" onclick="addSaved()">Save password</button>
+          <div class="panel-status" id="panelStatus"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>Auto-unlock profile</h2>
+        <p class="sub">Bank &amp; credit-card statements use passwords built from your details (e.g. first 4 letters of your name + date of birth). Fill in what you can — PDFree will generate the common formats and try them automatically. Stored encrypted in your Keychain.</p>
+        <div class="add-form" style="border-top:none; padding-top:0; margin-top:0">
+          <input type="text" id="prof-name" placeholder="Full name (e.g. Jitesh Dhamaniya)">
+          <input type="date" id="prof-dob" placeholder="Date of birth">
+          <input type="text" id="prof-card_last4" placeholder="Card last 4 digits" inputmode="numeric" maxlength="4">
+          <input type="text" id="prof-account_last4" placeholder="Account last 4 digits" inputmode="numeric" maxlength="4">
+          <input type="text" id="prof-customer_id" placeholder="Customer / CRN ID (optional)">
+          <input type="text" id="prof-pan" placeholder="PAN (optional)">
+          <input type="text" id="prof-mobile" placeholder="Mobile number (optional)">
+          <button class="btn" onclick="saveProfile()">Save profile</button>
+          <div class="panel-status" id="profileStatus"></div>
+        </div>
+      </div>
+
+      <span class="reset-link" onclick="togglePanel()">← Back</span>
+    </div>
+
     <p class="footer">Made by <a href="https://github.com/jiteshdhamaniya" target="_blank">Jitesh Dhamaniya</a></p>
   </div>
 
   <script>
-    const files = []; // { path, name, status, outputPath }
+    const invoke = window.__TAURI__.invoke;
+    const files = []; // { path, name, status, outputPath, ... }
+    let savedPasswords = []; // [{ id, label }]
+    let profileFilled = false;
+    const PROFILE_FIELDS = ['name', 'dob', 'card_last4', 'account_last4', 'customer_id', 'pan', 'mobile'];
 
     const dropZone = document.getElementById('dropZone');
     const dropContent = document.getElementById('dropContent');
+    const dropHint = document.getElementById('dropHint');
     const fileListContainer = document.getElementById('fileListContainer');
     const fileList = document.getElementById('fileList');
+    const mainView = document.getElementById('mainView');
+    const panelView = document.getElementById('panelView');
 
+    // ---------- Issuer recognition (from filename) ----------
+    // Maps keywords commonly found in statement filenames to a display name.
+    const ISSUERS = [
+      [['icici'], 'ICICI Bank'],
+      [['amazonpay', 'amazon'], 'Amazon Pay ICICI'],
+      [['hdfc'], 'HDFC Bank'],
+      [['sbicard', 'sbicredit'], 'SBI Card'],
+      [['sbi'], 'SBI'],
+      [['axis'], 'Axis Bank'],
+      [['flipkart'], 'Flipkart Axis'],
+      [['kotak'], 'Kotak'],
+      [['idfc'], 'IDFC FIRST'],
+      [['indusind'], 'IndusInd'],
+      [['yesbank', 'yes-bank'], 'YES Bank'],
+      [['rbl'], 'RBL Bank'],
+      [['onecard'], 'OneCard'],
+      [['amex', 'americanexpress'], 'American Express'],
+      [['citi'], 'Citibank'],
+      [['hsbc'], 'HSBC'],
+      [['standardchartered', 'scb'], 'Standard Chartered'],
+      [['pnb'], 'PNB'],
+      [['bob', 'bankofbaroda'], 'Bank of Baroda'],
+      [['canara'], 'Canara Bank'],
+    ];
+
+    function detectIssuer(filename) {
+      const key = filename.toLowerCase().replace(/[^a-z0-9]/g, '');
+      for (const [keywords, name] of ISSUERS) {
+        if (keywords.some(k => key.includes(k))) return name;
+      }
+      return null;
+    }
+
+    // ---------- Saved-passwords vault ----------
+    async function loadSaved() {
+      try {
+        savedPasswords = await invoke('list_passwords');
+      } catch (e) {
+        savedPasswords = [];
+      }
+      renderSavedList();
+      updateDropHint();
+    }
+
+    function updateDropHint() {
+      const parts = [];
+      const n = savedPasswords.length;
+      if (n > 0) parts.push(`${n} saved password${n > 1 ? 's' : ''}`);
+      if (profileFilled) parts.push('your profile');
+      dropHint.textContent = parts.length
+        ? `Auto-unlock with ${parts.join(' + ')}`
+        : '';
+    }
+
+    // ---------- Auto-unlock profile ----------
+    async function loadProfile() {
+      let profile = {};
+      try {
+        profile = await invoke('get_profile') || {};
+      } catch (e) { profile = {}; }
+      let any = false;
+      PROFILE_FIELDS.forEach(k => {
+        const el = document.getElementById('prof-' + k);
+        if (el) el.value = profile[k] || '';
+        if (profile[k]) any = true;
+      });
+      profileFilled = any;
+      updateDropHint();
+    }
+
+    async function saveProfile() {
+      const status = document.getElementById('profileStatus');
+      const profile = {};
+      PROFILE_FIELDS.forEach(k => {
+        const el = document.getElementById('prof-' + k);
+        profile[k] = el ? el.value.trim() : '';
+      });
+      try {
+        await invoke('save_profile', { profile });
+        profileFilled = PROFILE_FIELDS.some(k => profile[k]);
+        updateDropHint();
+        status.className = 'panel-status success';
+        status.textContent = 'Profile saved.';
+      } catch (e) {
+        status.className = 'panel-status error';
+        status.textContent = String(e);
+      }
+    }
+
+    function renderSavedList() {
+      const list = document.getElementById('savedList');
+      if (savedPasswords.length === 0) {
+        list.innerHTML = '<div class="empty-note">No saved passwords yet.</div>';
+        return;
+      }
+      list.innerHTML = savedPasswords.map(p => `
+        <div class="saved-item">
+          <span class="label">${escapeHtml(p.label)}</span>
+          <button class="icon-btn" onclick="deleteSaved('${escapeAttr(p.id)}')">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    async function addSaved() {
+      const labelEl = document.getElementById('newLabel');
+      const pwdEl = document.getElementById('newPassword');
+      const status = document.getElementById('panelStatus');
+      const password = pwdEl.value;
+      if (!password) {
+        status.className = 'panel-status error';
+        status.textContent = 'Enter a password to save.';
+        return;
+      }
+      try {
+        savedPasswords = await invoke('save_password', { label: labelEl.value, password });
+        labelEl.value = '';
+        pwdEl.value = '';
+        status.className = 'panel-status success';
+        status.textContent = 'Saved.';
+        renderSavedList();
+        updateDropHint();
+      } catch (e) {
+        status.className = 'panel-status error';
+        status.textContent = String(e);
+      }
+    }
+
+    async function deleteSaved(id) {
+      try {
+        savedPasswords = await invoke('delete_password', { id });
+        renderSavedList();
+        updateDropHint();
+      } catch (e) { /* ignore */ }
+    }
+
+    function togglePanel() {
+      const showPanel = panelView.style.display === 'none';
+      panelView.style.display = showPanel ? 'block' : 'none';
+      mainView.style.display = showPanel ? 'none' : 'block';
+      document.getElementById('settingsBtn').style.display = showPanel ? 'none' : 'block';
+      if (!showPanel) {
+        document.getElementById('panelStatus').textContent = '';
+      }
+    }
+
+    // ---------- Drag & drop ----------
     window.__TAURI__.event.listen('tauri://file-drop', (event) => {
       const paths = event.payload;
       if (paths && paths.length > 0) {
         const pdfPaths = paths.filter(p => p.toLowerCase().endsWith('.pdf'));
-        if (pdfPaths.length === 0) {
-          return;
-        }
+        if (pdfPaths.length === 0) return;
+        // Make sure we're on the main view when files arrive.
+        if (panelView.style.display !== 'none') togglePanel();
         pdfPaths.forEach(p => addFile(p));
       }
       dropZone.classList.remove('hover');
@@ -232,24 +543,39 @@
     });
 
     function addFile(path) {
-      // Skip duplicates
       if (files.some(f => f.path === path)) return;
 
       const name = path.split('/').pop();
       const index = files.length;
-      files.push({ path, name, status: 'pending', outputPath: null });
+      files.push({ path, name, status: 'checking', outputPath: null, manualUsed: false, saved: false, issuer: detectIssuer(name) });
 
       dropContent.style.display = 'none';
       fileListContainer.style.display = 'block';
       dropZone.classList.add('has-files');
 
       renderFileItem(index);
+      autoUnlock(index);
+    }
 
-      // Focus the new password input
-      setTimeout(() => {
-        const input = document.getElementById('pwd-' + index);
-        if (input) input.focus();
-      }, 100);
+    // Try saved passwords first; fall back to manual entry.
+    async function autoUnlock(index) {
+      const f = files[index];
+      try {
+        const result = await invoke('unlock_pdf_auto', { filePath: f.path });
+        f.status = 'done';
+        f.outputPath = result.output_path;
+        f.matchedLabel = result.matched_label; // null = no password was needed
+        f.manualUsed = false;
+        renderFileItem(index);
+      } catch (err) {
+        if (String(err) === 'NEEDS_PASSWORD') {
+          f.status = 'pending';
+        } else {
+          f.status = 'error';
+          f.errorMsg = String(err);
+        }
+        renderFileItem(index);
+      }
     }
 
     function renderFileItem(index) {
@@ -262,60 +588,77 @@
         fileList.appendChild(item);
       }
 
-      if (f.status === 'done') {
-        item.innerHTML = `
-          <div class="file-item-name">${escapeHtml(f.name)}</div>
-          <div class="file-item-status success">Unlocked successfully</div>
+      const nameHtml = `<div class="file-item-name">${escapeHtml(f.name)}</div>`;
+
+      if (f.status === 'checking') {
+        const what = f.issuer ? `Looks like a ${escapeHtml(f.issuer)} statement — trying your passwords…` : 'Checking saved passwords…';
+        item.innerHTML = nameHtml + `
+          <div class="file-item-status info"><span class="spinner"></span>${what}</div>
+        `;
+      } else if (f.status === 'done') {
+        let note;
+        if (f.matchedLabel) {
+          const badge = f.issuer ? `${f.issuer} · ${f.matchedLabel}` : f.matchedLabel;
+          note = `Unlocked <span class="badge">🔑 ${escapeHtml(badge)}</span>`;
+        } else if (f.manualUsed) {
+          note = 'Unlocked successfully';
+        } else {
+          note = 'No password was needed';
+        }
+        const saveOffer = (f.manualUsed && !f.saved)
+          ? `<button class="link-btn" onclick="showSaveRow(${index})" id="saveOffer-${index}">＋ Save this password for next time</button>
+             <div id="saveRow-${index}"></div>`
+          : '';
+        item.innerHTML = nameHtml + `
+          <div class="file-item-status success">${note}</div>
           <div class="action-buttons">
             <button class="btn-action" onclick="revealInFinder(${index})">Reveal in Finder</button>
             <button class="btn-action" onclick="openFile(${index})">Open File</button>
           </div>
+          ${saveOffer}
         `;
       } else if (f.status === 'unlocking') {
-        item.innerHTML = `
-          <div class="file-item-name">${escapeHtml(f.name)}</div>
+        item.innerHTML = nameHtml + `
           <div class="file-item-row">
             <input type="password" id="pwd-${index}" placeholder="Password" disabled>
             <button class="btn" disabled><span class="spinner"></span>...</button>
           </div>
         `;
       } else if (f.status === 'error') {
-        item.innerHTML = `
-          <div class="file-item-name">${escapeHtml(f.name)}</div>
+        item.innerHTML = nameHtml + `
           <div class="file-item-row">
             <input type="password" id="pwd-${index}" placeholder="Password" value="${escapeAttr(f.lastPassword || '')}">
             <button class="btn" onclick="unlockFile(${index})">Unlock</button>
           </div>
           <div class="file-item-status error">${escapeHtml(f.errorMsg)}</div>
         `;
-        setTimeout(() => {
-          const input = document.getElementById('pwd-' + index);
-          if (input) {
-            input.focus();
-            input.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter') unlockFile(index);
-            });
-          }
-        }, 50);
+        focusInput(index);
       } else {
-        // pending
-        item.innerHTML = `
-          <div class="file-item-name">${escapeHtml(f.name)}</div>
+        // pending — needs a password, none saved worked
+        const hint = f.issuer
+          ? `Couldn't auto-unlock this ${escapeHtml(f.issuer)} statement. Enter the password — I'll remember it.`
+          : '';
+        item.innerHTML = nameHtml + `
           <div class="file-item-row">
             <input type="password" id="pwd-${index}" placeholder="Password">
             <button class="btn" onclick="unlockFile(${index})">Unlock</button>
           </div>
-          <div class="file-item-status" id="status-${index}"></div>
+          <div class="file-item-status info" id="status-${index}">${hint}</div>
         `;
-        setTimeout(() => {
-          const input = document.getElementById('pwd-' + index);
-          if (input) {
-            input.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter') unlockFile(index);
-            });
-          }
-        }, 50);
+        focusInput(index);
       }
+    }
+
+    function focusInput(index) {
+      setTimeout(() => {
+        const input = document.getElementById('pwd-' + index);
+        if (input) {
+          input.focus();
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') unlockFile(index);
+          });
+        }
+      }, 50);
     }
 
     async function unlockFile(index) {
@@ -335,24 +678,61 @@
       renderFileItem(index);
 
       try {
-        const result = await window.__TAURI__.invoke('unlock_pdf', {
-          filePath: f.path,
-          password: password
-        });
+        const result = await invoke('unlock_pdf', { filePath: f.path, password });
         f.status = 'done';
         f.outputPath = result;
+        f.manualUsed = true;
+        f.matchedLabel = null;
         renderFileItem(index);
       } catch (err) {
         f.status = 'error';
-        f.errorMsg = err;
+        f.errorMsg = String(err);
         renderFileItem(index);
+      }
+    }
+
+    // ---------- Inline "save this password" (no blocking dialogs) ----------
+    function showSaveRow(index) {
+      const f = files[index];
+      const offer = document.getElementById('saveOffer-' + index);
+      if (offer) offer.style.display = 'none';
+      const row = document.getElementById('saveRow-' + index);
+      const suggested = f.issuer || f.name.replace(/\.pdf$/i, '');
+      row.innerHTML = `
+        <div class="save-row">
+          <input type="text" id="saveLabel-${index}" placeholder="Label" value="${escapeAttr(suggested)}">
+          <button class="btn" onclick="confirmSave(${index})">Save</button>
+        </div>
+        <div class="file-item-status" id="saveStatus-${index}"></div>
+      `;
+      setTimeout(() => {
+        const el = document.getElementById('saveLabel-' + index);
+        if (el) { el.focus(); el.select(); }
+      }, 50);
+    }
+
+    async function confirmSave(index) {
+      const f = files[index];
+      const labelEl = document.getElementById('saveLabel-' + index);
+      const status = document.getElementById('saveStatus-' + index);
+      try {
+        savedPasswords = await invoke('save_password', {
+          label: labelEl ? labelEl.value : f.name,
+          password: f.lastPassword
+        });
+        f.saved = true;
+        renderSavedList();
+        updateDropHint();
+        const row = document.getElementById('saveRow-' + index);
+        if (row) row.innerHTML = '<div class="file-item-status success">Saved for next time</div>';
+      } catch (e) {
+        if (status) { status.className = 'file-item-status error'; status.textContent = String(e); }
       }
     }
 
     async function revealInFinder(index) {
       const f = files[index];
       if (!f.outputPath) return;
-      // Use shell.open on the parent directory to reveal
       const parentDir = f.outputPath.substring(0, f.outputPath.lastIndexOf('/'));
       await window.__TAURI__.shell.open(parentDir);
     }
@@ -373,13 +753,19 @@
 
     function escapeHtml(str) {
       const div = document.createElement('div');
-      div.textContent = str;
+      div.textContent = str == null ? '' : str;
       return div.innerHTML;
     }
 
     function escapeAttr(str) {
-      return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return String(str == null ? '' : str)
+        .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+        .replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
+
+    // Init
+    loadSaved();
+    loadProfile();
   </script>
 </body>
 </html>
